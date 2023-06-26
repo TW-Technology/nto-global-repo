@@ -1,3 +1,6 @@
 [submodule "nto-web-spa"]
 	path = nto-web-spa
 	url = https://github.com/RobertoAsgon/nto-web-spa
+[submodule "nto-web-api"]
+	path = nto-web-api
+	url = https://github.com/luansmelo/nto-web-api
