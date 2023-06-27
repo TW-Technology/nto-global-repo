@@ -26,8 +26,6 @@ services:
       - ./nto-server-files/schema:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
-    networks:
-      - nesjs-network
 
   dbAdminPainel:
     image: phpmyadmin/phpmyadmin:5.1.1
@@ -60,10 +58,7 @@ services:
     container_name: 4-Next-Spa
     volumes:
       - ./nto-web-spa:/app
-    command: npm run dev
+    command: npm run start
     ports:
       - "3000:3000"
 
-networks:
-    nesjs-network:
-      driver: bridge
