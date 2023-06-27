@@ -56,9 +56,6 @@ services:
       context: ./nto-web-spa
       target: runner
     container_name: 4-Next-Spa
-    volumes:
-      - ./nto-web-spa:/app
-    command: npm run start
     ports:
-      - "3000:3000"
+      - 3000:3000
 
