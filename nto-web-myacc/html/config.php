@@ -16,10 +16,9 @@
  * @link      https://my-aac.org
  */
 
-
 $config = array(
 	// directories & files
-	'server_path' => '/srv/', // path to the server directory (same directory where config file is located)
+	'server_path' => '', // path to the server directory (same directory where config file is located)
 
 	/**
 	 * Environment Setting
@@ -70,7 +69,7 @@ $config = array(
 	'cache_prefix' => 'myaac_', // have to be unique if running more MyAAC instances on the same server (except file system cache)
 
 	// database details (leave blank for auto detect from config.lua)
-	'database_host' => 'db',
+	'database_host' => 'database',
 	'database_port' => '', // leave blank to default 3306
 	'database_user' => 'root',
 	'database_password' => '1234',
@@ -78,7 +77,6 @@ $config = array(
 	'database_log' => false, // should database queries be logged and and saved into system/logs/database.log?
 	'database_socket' => '', // set if you want to connect to database through socket (example: /var/run/mysqld/mysqld.sock)
 	'database_persistent' => false, // use database permanent connection (like server), may speed up your site
-	'database_encryption' => 'sha1',
 	
 	// multiworld system (only TFS 0.3)
 	'multiworld' => false, // use multiworld system?
@@ -152,8 +150,6 @@ $config = array(
 		3 => 'Paladin Sample',
 		4 => 'Knight Sample'
 	),
-
-	'use_character_sample_skills' => false,
 
 	// it must show limited number of players after using search in character page
 	'characters_search_limit' => 15,
@@ -283,13 +279,5 @@ $config = array(
 	'date_timezone' => 'Europe/Berlin', // more info at http://php.net/manual/en/timezones.php
 	'footer_show_load_time' => true, // display load time of the page in the footer
 
-	'npc' => array(),
-	
-	// character name blocked
-	'character_name_blocked' => array(
-		'prefix' => array(),
-		'names' => array(),
-		'words' => array(),
-	),
-	
+	'npc' => array()
 );

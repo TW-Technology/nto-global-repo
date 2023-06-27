@@ -12,57 +12,6 @@
 class CreateCharacter
 {
 	/**
-	 * @param $name
-	 * @param $errors
-	 * @return bool
-	 */
-	public function checkName($name, &$errors)
-	{
-		$minLength = config('character_name_min_length');
-		$maxLength = config('character_name_max_length');
-
-		if(empty($name)) {
-			$errors['name'] = 'Please enter a name for your character!';
-			return false;
-		}
-
-		if(strlen($name) > $maxLength) {
-			$errors['name'] = 'Name is too long. Max. length <b>' . $maxLength . '</b> letters.';
-			return false;
-		}
-
-		if(strlen($name) < $minLength) {
-			$errors['name'] = 'Name is too short. Min. length <b>' . $minLength . '</b> letters.';
-			return false;
-		}
-
-		$name_length = strlen($name);
-		if(strspn($name, "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM- '") != $name_length) {
-			$errors['name'] = 'This name contains invalid letters, words or format. Please use only a-Z, - , \' and space.';
-			return false;
-		}
-
-		if(!preg_match("/[A-z ']/", $name)) {
-			$errors['name'] = 'Your name contains illegal characters.';
-			return false;
-		}
-
-		if(!admin() && !Validator::newCharacterName($name)) {
-			$errors['name'] = Validator::getLastError();
-			return false;
-		}
-
-		$player = new OTS_Player();
-		$player->find($name);
-		if($player->isLoaded()) {
-			$errors['name'] = 'Character with this name already exist.';
-			return false;
-		}
-
-		return empty($errors);
-	}
-
-	/**
 	 * @param string $name
 	 * @param int $sex
 	 * @param int $vocation
@@ -70,27 +19,36 @@ class CreateCharacter
 	 * @param array $errors
 	 * @return bool
 	 */
-	public function check($name, $sex, &$vocation, &$town, &$errors)
-	{
-		$this->checkName($name, $errors);
+	public function check($name, $sex, &$vocation, &$town, &$errors) {
+		$minLength = config('character_name_min_length');
+		$maxLength = config('character_name_max_length');
 
-		if(empty($sex) && $sex != "0") {
-			$errors['sex'] = 'Please select the sex for your character!';
+		if(empty($name))
+			$errors['name'] = 'Please enter a name for your character!';
+		else if(strlen($name) > $maxLength)
+			$errors['name'] = 'Name is too long. Max. length <b>'.$maxLength.'</b> letters.';
+		else if(strlen($name) < $minLength)
+			$errors['name'] = 'Name is too short. Min. length <b>'.$minLength.'</b> letters.';
+		else {
+			if(!admin() && !Validator::newCharacterName($name)) {
+				$errors['name'] = Validator::getLastError();
+			}
 		}
+
+		if(empty($sex) && $sex != "0")
+			$errors['sex'] = 'Please select the sex for your character!';
 
 		if(count(config('character_samples')) > 1)
 		{
 			if(!isset($vocation))
 				$errors['vocation'] = 'Please select a vocation for your character.';
 		}
-		else {
+		else
 			$vocation = config('character_samples')[0];
-		}
 
 		if(count(config('character_towns')) > 1) {
-			if(!isset($town)) {
+			if(!isset($town))
 				$errors['town'] = 'Please select a town for your character.';
-			}
 		}
 		else {
 			$town = config('character_towns')[0];
@@ -138,7 +96,7 @@ class CreateCharacter
 
 		if(empty($errors))
 		{
-			$number_of_players_on_account = $account->getPlayersList(false)->count();
+			$number_of_players_on_account = $account->getPlayersList()->count();
 			if($number_of_players_on_account >= config('characters_per_account'))
 				$errors[] = 'You have too many characters on your account <b>('.$number_of_players_on_account.'/'.config('characters_per_account').')</b>!';
 		}
@@ -193,14 +151,8 @@ class CreateCharacter
 		$player->setManaSpent($char_to_copy->getManaSpent());
 		$player->setSoul($char_to_copy->getSoul());
 
-		for($skill = POT::SKILL_FIRST; $skill <= POT::SKILL_LAST; $skill++) {
-			$value = 10;
-			if (config('use_character_sample_skills')) {
-				$value = $char_to_copy->getSkill($skill);
-			}
-
-			$player->setSkill($skill, $value);
-		}
+		for($skill = POT::SKILL_FIRST; $skill <= POT::SKILL_LAST; $skill++)
+			$player->setSkill($skill, 10);
 
 		$player->setLookBody($char_to_copy->getLookBody());
 		$player->setLookFeet($char_to_copy->getLookFeet());
@@ -239,24 +191,17 @@ class CreateCharacter
 		}
 
 		if($db->hasTable('player_skills')) {
-
 			for($i=0; $i<7; $i++) {
-				$value = 10;
-				if (config('use_character_sample_skills')) {
-					$value = $char_to_copy->getSkill($i);
-				}
 				$skillExists = $db->query('SELECT `skillid` FROM `player_skills` WHERE `player_id` = ' . $player->getId() . ' AND `skillid` = ' . $i);
 				if($skillExists->rowCount() <= 0) {
-					$db->query('INSERT INTO `player_skills` (`player_id`, `skillid`, `value`, `count`) VALUES ('.$player->getId().', '.$i.', ' . $value . ', 0)');
+					$db->query('INSERT INTO `player_skills` (`player_id`, `skillid`, `value`, `count`) VALUES ('.$player->getId().', '.$i.', 10, 0)');
 				}
 			}
 		}
 
 		$loaded_items_to_copy = $db->query("SELECT * FROM player_items WHERE player_id = ".$char_to_copy->getId()."");
-		foreach($loaded_items_to_copy as $save_item) {
-			$blob = $db->quote($save_item['attributes']);
-			$db->query("INSERT INTO `player_items` (`player_id` ,`pid` ,`sid` ,`itemtype`, `count`, `attributes`) VALUES ('".$player->getId()."', '".$save_item['pid']."', '".$save_item['sid']."', '".$save_item['itemtype']."', '".$save_item['count']."', $blob);");
-		}
+		foreach($loaded_items_to_copy as $save_item)
+			$db->query("INSERT INTO `player_items` (`player_id` ,`pid` ,`sid` ,`itemtype`, `count`, `attributes`) VALUES ('".$player->getId()."', '".$save_item['pid']."', '".$save_item['sid']."', '".$save_item['itemtype']."', '".$save_item['count']."', '".$save_item['attributes']."');");
 
 		global $twig;
 		$twig->display('success.html.twig', array(

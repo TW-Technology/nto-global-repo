@@ -13,7 +13,6 @@
 require '../common.php';
 require SYSTEM . 'functions.php';
 require SYSTEM . 'init.php';
-require SYSTEM . 'login.php';
 
 $error = '';
 if(isset($_GET['account']))
@@ -59,15 +58,8 @@ else if(isset($_GET['name']))
 	if(!Validator::characterName($name))
 		error_(Validator::getLastError());
 
-	if(!admin() && !Validator::newCharacterName($name)){
+	if(!Validator::newCharacterName($name))
 		error_(Validator::getLastError());
-	}
-
-	require_once LIBS . 'CreateCharacter.php';
-	$createCharacter = new CreateCharacter();
-	if (!$createCharacter->checkName($name, $errors)) {
-		error_($errors['name']);
-	}
 
 	success_('Good. Your name will be:<br /><b>' . ucwords($name) . '</b>');
 }

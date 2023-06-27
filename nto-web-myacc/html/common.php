@@ -24,10 +24,11 @@
  * @link      https://my-aac.org
  */
 if (version_compare(phpversion(), '5.6', '<')) die('PHP version 5.6 or higher is required.');
+session_start();
 
 define('MYAAC', true);
-define('MYAAC_VERSION', '0.8.7');
-define('DATABASE_VERSION', 33);
+define('MYAAC_VERSION', '0.8.6');
+define('DATABASE_VERSION', 32);
 define('TABLE_PREFIX', 'myaac_');
 define('START_TIME', microtime(true));
 define('MYAAC_OS', stripos(PHP_OS, 'WIN') === 0 ? 'WINDOWS' : (strtoupper(PHP_OS) === 'DARWIN' ? 'MAC' : 'LINUX'));
@@ -84,9 +85,6 @@ define('TFS_02', 3);
 define('TFS_03', 4);
 define('TFS_FIRST', TFS_02);
 define('TFS_LAST', TFS_03);
-
-session_save_path(SYSTEM . 'php_sessions');
-session_start();
 
 // basedir
 $basedir = '';

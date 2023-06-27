@@ -2,8 +2,8 @@
 -- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: database
--- Tempo de geração: 27-Jun-2023 às 22:43
+-- Host: db
+-- Tempo de geração: 27-Jun-2023 às 21:41
 -- Versão do servidor: 5.7.41
 -- versão do PHP: 7.4.20
 
@@ -21,41 +21,6 @@ SET time_zone = "+00:00";
 -- Banco de dados: `otserv`
 --
 
-DELIMITER $$
---
--- Procedimentos
---
-CREATE DEFINER=`root`@`%` PROCEDURE `AddMissingColumns` ()  BEGIN
-    DECLARE COLUMN_NAME VARCHAR(191);
-    
-    -- Verifica e adiciona a coluna salt
-    SET COLUMN_NAME = 'salt';
-    IF NOT EXISTS (
-        SELECT *
-        FROM information_schema.columns
-        WHERE table_name = 'accounts' AND column_name = COLUMN_NAME
-    ) THEN
-        ALTER TABLE `accounts`
-        ADD COLUMN `salt` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT '';
-    END IF;
-    
-    -- Repita o mesmo padrão para cada coluna restante
-    -- Altere o nome da coluna e a definição conforme necessário
-    -- Exemplo:
-    -- SET COLUMN_NAME = 'lastday';
-    -- IF NOT EXISTS (
-    --     SELECT *
-    --     FROM information_schema.columns
-    --     WHERE table_name = 'accounts' AND column_name = COLUMN_NAME
-    -- ) THEN
-    --     ALTER TABLE `accounts`
-    --     ADD COLUMN `lastday` int(11) DEFAULT '0';
-    -- END IF;
-
-END$$
-
-DELIMITER ;
-
 -- --------------------------------------------------------
 
 --
@@ -66,10 +31,8 @@ CREATE TABLE `accounts` (
   `id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
   `password` char(40) NOT NULL,
-  `salt` varchar(255) DEFAULT '',
   `secret` char(16) DEFAULT NULL,
   `type` int(11) NOT NULL DEFAULT '1',
-  `group_id` int(11) DEFAULT '1',
   `premdays` int(11) NOT NULL DEFAULT '0',
   `coins` int(12) NOT NULL DEFAULT '0',
   `lastday` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -92,28 +55,22 @@ CREATE TABLE `accounts` (
   `email_code` varchar(255) NOT NULL DEFAULT '',
   `email_next` int(11) NOT NULL DEFAULT '0',
   `premium_points` int(11) NOT NULL DEFAULT '0',
-  `nickname` varchar(255) DEFAULT NULL,
-  `avatar` varchar(255) DEFAULT NULL,
-  `about_me` varchar(255) DEFAULT NULL,
-  `premium_points_used` int(11) DEFAULT '0',
   `create_date` int(11) NOT NULL DEFAULT '0',
   `create_ip` int(11) NOT NULL DEFAULT '0',
   `last_post` int(11) NOT NULL DEFAULT '0',
   `flag` varchar(80) NOT NULL DEFAULT '',
   `vip_time` int(11) NOT NULL DEFAULT '0',
   `guild_points` int(11) NOT NULL DEFAULT '0',
-  `guild_points_stats` int(11) NOT NULL DEFAULT '0',
-  `warnings` int(11) DEFAULT '0'
+  `guild_points_stats` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Extraindo dados da tabela `accounts`
 --
 
-INSERT INTO `accounts` (`id`, `name`, `password`, `salt`, `secret`, `type`, `group_id`, `premdays`, `coins`, `lastday`, `email`, `creation`, `vote`, `key`, `blocked`, `created`, `email_new`, `email_new_time`, `rlname`, `location`, `country`, `web_lastlogin`, `web_flags`, `email_hash`, `email_verified`, `page_access`, `email_code`, `email_next`, `premium_points`, `nickname`, `avatar`, `about_me`, `premium_points_used`, `create_date`, `create_ip`, `last_post`, `flag`, `vip_time`, `guild_points`, `guild_points_stats`, `warnings`) VALUES
-(8, 'god', '21298df8a3277357ee55b01df9530b535cf08ec1', '', NULL, 5, 1, 0, 0, 0, 'patsadow2@gmail.com', 1465696163, 0, '', 0, 0, '', 0, '', '', '', 0, 0, '', 0, 9999, '', 0, 639, NULL, NULL, NULL, 0, 0, 0, 1467772450, '', 0, 0, 0, 0),
-(9, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', '', NULL, 5, 1, 0, 0, 0, 'admin@admin.com', 0, 0, '', 0, 1678041702, '', 0, '', '', 'us', 1687902050, 3, '', 0, 0, '', 0, 0, NULL, NULL, NULL, 0, 0, 0, 0, '', 0, 0, 0, 0),
-(10, 'string', 'ecb252044b5ea0f679ee78ec1a12904739e2904d', '', NULL, 1, 1, 0, 0, 0, 'string@email.com', 0, 0, '', 0, 0, '', 0, '', '', '', 0, 0, '', 0, 0, '', 0, 0, NULL, NULL, NULL, 0, 0, 0, 0, '', 0, 0, 0, 0);
+INSERT INTO `accounts` (`id`, `name`, `password`, `secret`, `type`, `premdays`, `coins`, `lastday`, `email`, `creation`, `vote`, `key`, `blocked`, `created`, `email_new`, `email_new_time`, `rlname`, `location`, `country`, `web_lastlogin`, `web_flags`, `email_hash`, `email_verified`, `page_access`, `email_code`, `email_next`, `premium_points`, `create_date`, `create_ip`, `last_post`, `flag`, `vip_time`, `guild_points`, `guild_points_stats`) VALUES
+(8, 'god', '21298df8a3277357ee55b01df9530b535cf08ec1', NULL, 5, 0, 0, 0, 'patsadow2@gmail.com', 1465696163, 0, '', 0, 0, '', 0, '', '', '', 0, 0, '', 0, 9999, '', 0, 639, 0, 0, 1467772450, '', 0, 0, 0),
+(9, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', NULL, 5, 0, 0, 0, 'admin@admin.com', 0, 0, '', 0, 1678041702, '', 0, '', '', 'us', 1687902050, 3, '', 0, 0, '', 0, 0, 0, 0, 0, '', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -1542,7 +1499,7 @@ CREATE TABLE `myaac_config` (
 --
 
 INSERT INTO `myaac_config` (`id`, `name`, `value`) VALUES
-(1, 'database_version', '33'),
+(1, 'database_version', '32'),
 (2, 'status_online', ''),
 (3, 'status_players', '0'),
 (4, 'status_playersMax', '0'),
@@ -1550,7 +1507,7 @@ INSERT INTO `myaac_config` (`id`, `name`, `value`) VALUES
 (6, 'status_uptime', '0h 0m'),
 (7, 'status_monsters', '0'),
 (8, 'last_usage_report', '1687733192'),
-(9, 'views_counter', '30');
+(9, 'views_counter', '20');
 
 -- --------------------------------------------------------
 
@@ -2077,7 +2034,7 @@ CREATE TABLE `myaac_videos` (
 --
 
 CREATE TABLE `myaac_visitors` (
-  `ip` varchar(45) NOT NULL,
+  `ip` varchar(16) NOT NULL,
   `lastvisit` int(11) NOT NULL DEFAULT '0',
   `page` varchar(2048) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -4186,7 +4143,7 @@ ALTER TABLE `z_shop_offer`
 -- AUTO_INCREMENT de tabela `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `account_ban_history`

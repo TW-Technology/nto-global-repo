@@ -7,7 +7,9 @@ $config['server_path'] = '/srv/';
 $config['mail_admin'] = 'admin@admin.com';
 $config['mail_address'] = 'admin@admin.com';
 $config['date_timezone'] = 'America/Sao_Paulo';
-$config['client'] = '1098';
+$config['client'] = '1041';
 $config['anonymous_usage_statistics'] = true;
-$config['session_prefix'] = 'myaac_o5kvhl53_';
-$config['cache_prefix'] = 'myaac_hl1924g3_';
+$config['session_prefix'] = 'myaac_34yfey2x_';
+$config['cache_prefix'] = 'myaac_3rkx1wqo_';
+
+$config['highscores_ids_hidden'] = array(15, 16, 17, 18, 19);

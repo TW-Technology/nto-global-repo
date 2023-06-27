@@ -48,7 +48,7 @@ class __TwigTemplate_c4905d8cbaeedcfc8e891e9fbf598cb744f4574fe6e6de2739e3fc40f9a
         echo "</div>
 \t\t";
         // line 6
-        if (($this->getAttribute(($context["config"] ?? null), "news_author", []) &&  !twig_test_empty(($context["author"] ?? null)))) {
+        if ( !twig_test_empty(($context["author"] ?? null))) {
             // line 7
             echo "\t\t<div class=\"NewsHeadlineAuthor\"><b>Author: </b><i>";
             echo twig_escape_filter($this->env, ($context["author"] ?? null), "html", null, true);
