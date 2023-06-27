@@ -15,19 +15,6 @@ services:
     depends_on:
       - database
 
-  site:
-    build:
-      context: ./nto-web-files
-    container_name: 2-MyAcc-Site
-    volumes:
-      - ./nto-server-files/datapack:/srv
-      - ./nto-web-files/html:/var/www/html
-    ports:
-      - "80:80"
-    depends_on:
-      - database
-      - ubuntu
-
   database:
     image: mysql:5.7
     container_name: 3-BancoDeDados
@@ -39,6 +26,8 @@ services:
       - ./nto-server-files/schema:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    networks:
+      - nesjs-network
 
   dbAdminPainel:
     image: phpmyadmin/phpmyadmin:5.1.1
@@ -50,3 +39,31 @@ services:
       - database
     environment:
       PMA_ARBITRARY: 1
+
+  myacc:
+    build:
+      context: ./nto-web-myacc
+    container_name: 2-MyAcc-Site
+    volumes:
+      - ./nto-server-files/datapack:/srv
+      - ./nto-web-myacc/html:/var/www/html
+    ports:
+      - "80:80"
+    depends_on:
+      - database
+      - ubuntu
+
+  spa:
+    build:
+      context: ./nto-web-spa
+      target: runner
+    container_name: 4-Next-Spa
+    volumes:
+      - ./nto-web-spa:/app
+    command: npm run dev
+    ports:
+      - "3000:3000"
+
+networks:
+    nesjs-network:
+      driver: bridge
