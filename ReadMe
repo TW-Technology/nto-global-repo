@@ -1,0 +1,3 @@
+<!-- Atualizar submodulos -->
+
+git submodule update --recursive --remote

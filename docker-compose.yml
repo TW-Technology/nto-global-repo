@@ -54,7 +54,6 @@ services:
   spa:
     build:
       context: ./nto-web-spa
-      target: runner
     container_name: 4-Next-Spa
     ports:
       - 3000:3000
