@@ -15,6 +15,13 @@ services:
     depends_on:
       - database
 
+  spa:
+    build:
+      context: ./nto-web-spa
+    container_name: 4-Next-Spa
+    ports:
+      - 3000:3000
+
   database:
     image: mysql:5.7
     container_name: 3-BancoDeDados
@@ -37,24 +44,4 @@ services:
       - database
     environment:
       PMA_ARBITRARY: 1
-
-  myacc:
-    build:
-      context: ./nto-web-myacc
-    container_name: 2-MyAcc-Site
-    volumes:
-      - ./nto-server-files/datapack:/srv
-      - ./nto-web-myacc/html:/var/www/html
-    ports:
-      - "80:80"
-    depends_on:
-      - database
-      - ubuntu
-
-  spa:
-    build:
-      context: ./nto-web-spa
-    container_name: 4-Next-Spa
-    ports:
-      - 3000:3000
 
