@@ -30,6 +30,32 @@ jobs:
           source: ./
           target: /home/nto-global-repo/
 
+      - name: Check if Docker is installed
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          script: |
+            if ! command -v docker &> /dev/null; then
+              echo "Docker is not installed"
+              INSTALL_DOCKER=true
+            else
+              echo "Docker is already installed"
+              INSTALL_DOCKER=false
+            fi
+
+      - name: Install Docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          if: ${{ steps.check-docker.outputs.INSTALL_DOCKER == 'true' }}
+          script: |
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+
       - name: Check if Docker Compose is installed
         run: docker-compose version
         continue-on-error: true
