@@ -48,6 +48,6 @@ jobs:
           password: ${{ secrets.REMOTE_PASSWORD }}
           script: |
             cd /home/nto-global-repo/
-            docker compose stop
-            docker compose build
-            docker compose up
+            docker-compose stop
+            docker-compose build
+            docker-compose up
