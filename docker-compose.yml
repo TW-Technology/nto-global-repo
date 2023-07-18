@@ -45,3 +45,11 @@ services:
     environment:
       PMA_ARBITRARY: 1
 
+  api:
+    build:
+      context: ./nto-web-api
+    container_name: Api
+    ports:
+      - 3003:3003
+    depends_on:
+      - database
