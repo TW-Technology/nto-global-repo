@@ -33,6 +33,8 @@ services:
       - ./nto-server-files/schema:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    networks:
+      - my-network
 
   dbAdminPainel:
     image: phpmyadmin/phpmyadmin:5.1.1
@@ -53,3 +55,8 @@ services:
       - 3003:3003
     depends_on:
       - database
+    networks:
+      - my-network
+
+networks:
+  my-network:

@@ -14,6 +14,9 @@ jobs:
       - name: Checkout files repository
         uses: actions/checkout@v2
 
+      - name: Update Submodules
+        run: git submodule update --init --recursive
+
       - name: Set up SSH
         uses: appleboy/ssh-action@master
         with:
