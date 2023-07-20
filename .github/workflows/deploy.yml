@@ -14,22 +14,9 @@ jobs:
       - name: Checkout files repository
         uses: actions/checkout@v2
 
-      - name: Configurar credenciais do Git
-        run: |
-          git config --global user.email "robertoasgon@gmail.com"
-          git config --global user.name "RobertoAssis"
-          git config --global credential.helper "store --file ~/.git-credentials"
-
-      - name: Armazenar credenciais do Git
-        run: echo "https://${{ secrets.PAT_TOKEN }}:x-oauth-basic@github.com" > ~/.git-credentials
-
-      - name: Atualizar submódulos
+      - name: Update Submodules
         run: |
           git submodule update --init --recursive
-          cd /home/nto-global-repo/nto-web-api
-          git config --local credential.helper "store --file ~/.git-credentials"
-          git fetch origin
-          git checkout origin/main
 
       - name: Set up SSH
         uses: appleboy/ssh-action@master
