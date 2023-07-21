@@ -33,6 +33,7 @@ jobs:
           password: ${{ secrets.REMOTE_PASSWORD }}
           source: ./
           target: /home/nto-global-repo/
+          excludes: '.git'
           overwrite: true
 
       - name: Check if Docker is installed
