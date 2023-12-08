@@ -1,0 +1,84 @@
+name: Action Deploy 
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    name: Infra Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout files repository
+        uses: actions/checkout@v2
+
+      - name: Update Submodules
+        run: |
+          git submodule update --init --recursive
+
+      - name: Set up SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+
+      - name: Clear cloud files
+        run: |
+          sshpass -p "${{ secrets.REMOTE_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "rm -rf /home/nto-global-repo/*"
+
+      - name: Update cloud files
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          source: ./
+          target: /home/nto-global-repo/
+          overwrite: true
+
+      - name: Check if Docker is installed
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          script: |
+            if ! command -v docker &> /dev/null; then
+              echo "Docker is not installed"
+              INSTALL_DOCKER=true
+            else
+              echo "Docker is already installed"
+              INSTALL_DOCKER=false
+            fi
+
+      - name: Install Docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          if: ${{ steps.check-docker.outputs.INSTALL_DOCKER == 'true' }}
+          script: |
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            docker-compose version
+
+      - name: Build and Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          script: |
+            cd /home/nto-global-repo/
+            docker-compose stop
+            docker-compose build
+            docker-compose up
